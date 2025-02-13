@@ -9,7 +9,7 @@ class AdminController {
 
     public function __construct() {
         $this->userModel = new User();
-        //$this->eventModel = new Event();
+        $this->eventModel = new Event();
     }
 
     public function dashboard() {

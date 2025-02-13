@@ -58,7 +58,7 @@ class UserController {
         $_SESSION['user_id'] = $user['id'];
         $_SESSION['user_role'] = $user['role'];
 
-        // Redirection en fonction du rôle de l'utilisateur
+        
         switch ($user['role']) {
             case 'admin':
                 header('Location: /admin/dashboard');

@@ -8,8 +8,8 @@ class OrganizerController {
     private $promoCodeModel;
 
     public function __construct() {
-      //  $this->eventModel = new Event();
-      //  $this->promoCodeModel = new PromoCode();
+       $this->eventModel = new Event();
+       $this->promoCodeModel = new PromoCode();
     }
 
     public function dashboard() {
