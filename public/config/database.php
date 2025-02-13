@@ -9,7 +9,7 @@ class Database {
         $db = "event_managementf";
        
         $user = 'postgres';
-        $pass = '1234';
+        $pass = '';
         try {
             $this->conn = new PDO("pgsql:host=$host;dbname=$db", $user, $pass);
             $this->conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);

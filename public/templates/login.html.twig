@@ -1,0 +1,21 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Se connecter{% endblock %}
+
+{% block content %}
+    <h2>Formulaire de connexion</h2>
+    
+    <form action="./controllers/base/baseController.php" method="POST">
+        <div>
+            <label for="username">Nom d'utilisateur :</label>
+            <input type="text" id="username" name="email" required>
+        </div>
+        <div>
+            <label for="password">Mot de passe :</label>
+            <input type="password" id="password" name="password" required>
+        </div>
+        <div>
+            <button type="submit" name="login" >Se connecter</button>
+        </div>
+    </form>
+{% endblock %}
