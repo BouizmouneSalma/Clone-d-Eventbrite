@@ -38,4 +38,17 @@ class Reservation {
         $stmt->execute(['user_id' => $userId]);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
+    public function getParticipantsByEvent($event_id) {
+        $sql = "SELECT u.id, u.first_name, u.last_name, u.email 
+                FROM reservations r
+                JOIN users u ON r.user_id = u.id
+                JOIN tickets t ON r.ticket_id = t.id
+                WHERE t.event_id = :event_id";
+    
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute(['event_id' => $event_id]);
+    
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+    
 }

@@ -43,10 +43,11 @@ $router->addRoute('POST', '/admin/events', 'AdminController', 'manageEvents');
 $router->addRoute('GET', '/organizer/dashboard', 'OrganizerController', 'dashboard');
 $router->addRoute('GET', '/organizer/promo-codes/create', 'OrganizerController', 'createPromoCode');
 $router->addRoute('POST', '/organizer/promo-codes/create', 'OrganizerController', 'createPromoCode');
+$router->addRoute('GET', '/organizer/gerer', 'OrganizerController', 'gerer');
+
 //$router->addRoute('GET', '/organizer/export-participants/{id}', 'OrganizerController', 'exportParticipants');
 
 $method = $_SERVER['REQUEST_METHOD'];
 $uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 
 $router->dispatch($method, $uri);
-

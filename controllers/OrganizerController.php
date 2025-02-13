@@ -2,14 +2,18 @@
 
 require_once '../models/Event.php';
 require_once '../models/PromoCode.php';
+require_once '../models/Reservation.php';
 
 class OrganizerController {
     private $eventModel;
     private $promoCodeModel;
+    private $reservationModel;
 
     public function __construct() {
        $this->eventModel = new Event();
        $this->promoCodeModel = new PromoCode();
+       $this->reservationModel = new Reservation();
+
     }
 
     public function dashboard() {
@@ -61,4 +65,22 @@ class OrganizerController {
             'total_revenue' => $this->eventModel->getTotalRevenueByOrganizer($organizer_id),
         ];
     }
+
+    public function gerer() {
+        if (!isset($_SESSION['user_role']) || $_SESSION['user_role'] !== 'organizer') {
+            header('Location: /login');
+            exit;
+        }
+
+        $organizer_id = $_SESSION['user_id'];
+        $events = $this->eventModel->getByOrganizer($organizer_id);
+
+        foreach ($events as &$event) {
+            $event['participants'] = $this->reservationModel->getParticipantsByEvent($event['id']);
+        }
+
+        require '../views/organizer/manage_sales.php';
+    }
+
+   
 }
