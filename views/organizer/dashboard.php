@@ -49,6 +49,7 @@
 
 <div class="bg-white p-6 rounded-lg shadow-md">
     <h2 class="text-2xl font-semibold mb-4">Actions rapides</h2>
+    <a href="/events/create" class="inline-block bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition-colors mr-2">Créer un événement</a>   
     <a href="" class="inline-block bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition-colors mr-2">Gerer les ventes</a>
     <a href="/organizer/promo-codes/create" class="inline-block bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 transition-colors">Créer un code promo</a>
 </div>
