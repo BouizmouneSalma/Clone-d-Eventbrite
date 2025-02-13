@@ -1,6 +1,6 @@
 <?php
-require_once 'C:\Users\youco\Desktop\twig-workshop\model\UserModel.php';
-require_once 'C:\Users\youco\Desktop\twig-workshop\config\database.php';
+require_once 'C:\Users\youco\Desktop\MyEvenT\model\UserModel.php';
+require_once 'C:\Users\youco\Desktop\MyEvenT\config\database.php';
 
 class UserModelimpl implements UserModel
 {
