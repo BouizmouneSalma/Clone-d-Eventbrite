@@ -3,7 +3,7 @@ session_start();
 
 require_once '../config/database.php';
 require_once '../core/Router.php';
-require_once '../controllers/UserController.php';
+require_once '../controllers/UserControllers.php';
 require_once '../controllers/EventController.php';
 require_once '../controllers/TicketController.php';
 require_once '../controllers/AdminController.php';
