@@ -38,6 +38,10 @@ $router->addRoute('GET', '/admin/users', 'AdminController', 'manageUsers');
 $router->addRoute('POST', '/admin/users', 'AdminController', 'manageUsers');
 $router->addRoute('GET', '/admin/events', 'AdminController', 'manageEvents');
 $router->addRoute('POST', '/admin/events', 'AdminController', 'manageEvents');
+$router->addRoute('POST', '/admin/users/update', 'AdminController', 'updateUser');
+$router->addRoute('POST', '/admin/users/delete', 'AdminController', 'deleteUser');
+$router->addRoute('POST', '/admin/users/ban', 'AdminController', 'banUser');
+$router->addRoute('POST', '/admin/users/unban', 'AdminController', 'unbanUser');
 
 // Organizer routes
 $router->addRoute('GET', '/organizer/dashboard', 'OrganizerController', 'dashboard');

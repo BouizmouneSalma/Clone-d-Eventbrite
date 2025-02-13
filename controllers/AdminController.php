@@ -26,23 +26,48 @@ class AdminController {
     }
 
     public function manageUsers() {
+        $users = $this->userModel->getAll();
+        require '../views/admin/users.php';
+    }
+
+    public function updateUser(){
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $user_id = $_POST['user_id'];
-            $action = $_POST['action'];
-
-            if ($action === 'ban') {
-                $this->userModel->banUser($user_id);
-            } elseif ($action === 'change_role') {
-                $new_role = $_POST['new_role'];
-                $this->userModel->changeRole($user_id, $new_role);
-            }
-
+            $first_name = $_POST['first_name'];
+            $last_name = $_POST['last_name'];
+            $email = $_POST['email'];
+            $role = $_POST['role'];
+            $this->userModel->update($user_id, $first_name, $last_name, $email, $role);
             header('Location: /admin/users');
             exit;
         }
+    }
 
-        $users = $this->userModel->getAll();
-        require '../views/admin/users.php';
+    public function deleteUser(){
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $user_id = $_POST['user_id'];
+            $this->userModel->delete($user_id);
+            header('Location: /admin/users');
+            exit;
+        }
+    }
+
+    public function banUser(){
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $user_id = $_POST['user_id'];
+            $this->userModel->ban($user_id);
+            header('Location: /admin/users');
+            exit;
+        }
+    }
+
+    public function unbanUser(){
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $user_id = $_POST['user_id'];
+            $this->userModel->unban($user_id);
+            header('Location: /admin/users');
+            exit;
+        }
     }
 
     public function manageEvents() {
