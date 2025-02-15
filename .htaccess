@@ -1,0 +1,10 @@
+# Enable URL rewriting
+RewriteEngine On
+
+# Ensure that the request is not for an existing file or directory
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+
+# Redirect everything to index.php with route parameter
+RewriteRule ^(.*)$ index.php?route=$1 [L,QSA]
+
