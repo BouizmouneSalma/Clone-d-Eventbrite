@@ -6,15 +6,35 @@ class Event {
     public function __construct() {
         $this->db = Database::getInstance()->getConnection();
     }
-
     public function create($data) {
-        var_dump($data['organizer_id']);
+    $sql = "INSERT INTO events (organizer_id, category_id, title, description, event_date, location, total_tickets, price, image) 
+            VALUES (:organizer_id, :category_id, :title, :description, :event_date, :location, :total_tickets, :price, :image)";
+    
+    $stmt = $this->db->prepare($sql);
+    $stmt->execute($data);
+    $eventId = $this->db->lastInsertId();
 
-        $sql = "INSERT INTO events (organizer_id, category_id, title, description, event_date, location, total_tickets, price) VALUES (:organizer_id, :category_id, :title, :description, :event_date, :location, :total_tickets, :price)";
-        $stmt = $this->db->prepare($sql);
-        $stmt->execute($data);
-        return $this->db->lastInsertId();
+    if ($eventId) {
+        $this->generateTickets($eventId, $data['total_tickets']);
     }
+
+    return $eventId;
+}
+
+
+private function generateTickets($eventId, $totalTickets) {
+    $sql = "INSERT INTO tickets (event_id, ticket_number, status) VALUES (:event_id, :ticket_number, 'available')";
+    $stmt = $this->db->prepare($sql);
+
+    for ($i = 1; $i <= $totalTickets; $i++) {
+        $stmt->execute([
+            'event_id' => $eventId,
+            'ticket_number' => "TCK-" . strtoupper(uniqid()) . "-$i"
+        ]);
+    }
+}
+
+
     public function delete($id) {
     $sql = "DELETE FROM events WHERE id = :id";
     $stmt = $this->db->prepare($sql);
@@ -46,11 +66,16 @@ class Event {
     return $stmt->execute(['id' => $eventId]);
 }
 
-    public function getPendingEvents() {
-        $sql = "SELECT e.*, u.first_name, u.last_name FROM events e JOIN users u ON e.organizer_id = u.id WHERE e.is_approved = FALSE ORDER BY e.event_date";
-        $stmt = $this->db->query($sql);
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
-    }
+public function getPendingEvents() {
+    $sql = "SELECT DISTINCT e.*, u.first_name, u.last_name 
+            FROM events e 
+            JOIN users u ON e.organizer_id = u.id 
+            WHERE e.is_approved = FALSE 
+            ORDER BY e.event_date";
+    $stmt = $this->db->query($sql);
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
+
 
     public function getTotalEvents() {
         $sql = "SELECT COUNT(*) FROM events WHERE is_approved = TRUE";
@@ -113,11 +138,34 @@ class Event {
     }
 
     public function getByOrganizer($organizerId) {
-        $sql = "SELECT * FROM events WHERE organizer_id = :organizer_id ORDER BY event_date";
-        $stmt = $this->db->prepare($sql);
-        $stmt->execute(['organizer_id' => $organizerId]);
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
-    }
+    $sql = "SELECT e.*, 
+       (e.total_tickets - COUNT(t.id)) AS remaining_tickets, 
+       COUNT(t.id) AS tickets_sold
+FROM events e
+LEFT JOIN tickets t ON e.id = t.event_id AND t.status = 'reserved'
+WHERE e.organizer_id = :organizer_id
+GROUP BY e.id, e.total_tickets
+ORDER BY e.event_date;
+";
+
+    $stmt = $this->db->prepare($sql);
+    $stmt->execute(['organizer_id' => $organizerId]);
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
+
+public function getRemainingTickets($eventId) {
+    $sql = "SELECT e.id, 
+                   e.total_tickets - COUNT(t.id) AS remaining_tickets
+            FROM events e
+            LEFT JOIN tickets t ON e.id = t.event_id AND t.status = 'reserved'
+            WHERE e.id = :event_id
+            GROUP BY e.id, e.total_tickets";
+
+    $stmt = $this->db->prepare($sql);
+    $stmt->execute(['event_id' => $eventId]);
+    return $stmt->fetch(PDO::FETCH_ASSOC); 
+}
+
 
     public function getParticipants($eventId) {
         $sql = "SELECT u.id, u.first_name, u.last_name, u.email FROM users u 
@@ -166,5 +214,8 @@ public function getTotalRevenueByOrganizer($organizerId)
 
     return $stmt->fetch(PDO::FETCH_ASSOC)['total_revenue'] ?? 0;
 }
-
-}
+public function decrementTicketsSold($eventId) {
+        $sql = "UPDATE events SET tickets_sold = tickets_sold - 1 WHERE id = :id";
+        $stmt = $this->db->prepare($sql);
+        return $stmt->execute(['id' => $eventId]);
+    }}
