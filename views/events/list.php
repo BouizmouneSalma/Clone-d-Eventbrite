@@ -1,9 +1,12 @@
 <?php ob_start(); ?>
-<section class="bg-indigo-600 text-white text-center py-20">
-        <h1 class="text-4xl font-bold mb-4">Bienvenue sur EventManager</h1>
-        <p class="text-lg mb-8">Organisez, gérez et participez à des événements exceptionnels avec facilité.</p>
-        <a href="#content" class="py-3 px-6 bg-green-500 text-white font-semibold rounded-md hover:bg-green-400 transition-all duration-300">Voir les événements</a>
-    </section>
+<section class=" bg-indigo-600 text-white text-center py-20">
+    <h1 class="text-4xl font-bold mb-4">Bienvenue sur EventManager</h1>
+    <p class="text-lg mb-8">Organisez, gérez et participez à des événements exceptionnels avec facilité.</p>
+    <a href="#content" class="py-3 px-6 bg-green-500 text-white font-semibold rounded-md hover:bg-green-400 transition-all duration-300">
+        Voir les événements
+    </a>
+</section>
+
 <h2 class="text-3xl mt-16 font-bold text-center text-gray-900 mb-10">📅 Événements à venir</h2>
 
 <div class="max-w-4xl mx-auto mb-10">
@@ -29,15 +32,56 @@
     <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8" >
         <?php foreach ($events as $event): ?>
             <div class="bg-white p-6 rounded-lg shadow-lg hover:shadow-2xl transition-transform transform hover:scale-105 duration-300">
-                <img src="https://via.placeholder.com/350x200" alt="Event" class="w-full h-48 object-cover rounded-md mb-4">
+                <img src="<?php echo htmlspecialchars($event['image']); ?>" alt="Event" class="w-full h-48 object-cover rounded-md mb-4">
                 <h3 class="text-xl font-semibold text-gray-800 mb-2"><?php echo htmlspecialchars($event['title']); ?></h3>
                 <p class="text-gray-600 mb-4 line-clamp-3"><?php echo htmlspecialchars($event['description']); ?></p>
                 <p class="text-sm text-gray-500">📆 <?php echo date('d/m/Y H:i', strtotime($event['event_date'])); ?></p>
                 <p class="text-sm text-gray-500">📍 <?php echo htmlspecialchars($event['location']); ?></p>
+                
                 <a href="/events/<?php echo $event['id']; ?>" class="inline-block mt-4 px-5 py-2 bg-indigo-600 text-white font-semibold rounded-lg hover:bg-indigo-700 transition-all duration-300">Voir les détails</a>
             </div>
         <?php endforeach; ?>
     </div>
+    <div class="flex justify-center mt-8">
+    <nav class="flex items-center space-x-2">
+        <ul class="flex space-x-2">
+            <!-- Bouton Page précédente -->
+            <?php if ($page > 1): ?>
+                <li>
+                    <a href="?page=<?php echo $page - 1; ?><?php echo $category_id ? '&category_id=' . $category_id : ''; ?>"
+                        class="flex items-center justify-center w-10 h-10 text-gray-600 hover:text-white bg-gray-200 hover:bg-indigo-600 rounded-full transition duration-300">
+                        &lt;
+                    </a>
+                </li>
+            <?php endif; ?>
+
+            <!-- Affichage des pages -->
+            <?php for ($i = 1; $i <= $totalPages; $i++): ?>
+                <li>
+                    <a href="?page=<?php echo $i; ?><?php echo $category_id ? '&category_id=' . $category_id : ''; ?>"
+                        class="flex items-center justify-center w-10 h-10 <?php echo $i == $page ? 'bg-indigo-600 text-white' : 'text-gray-600 bg-gray-200 hover:bg-indigo-600 hover:text-white'; ?> rounded-full transition duration-300">
+                        <?php echo $i; ?>
+                    </a>
+                </li>
+            <?php endfor; ?>
+
+            <!-- Bouton Page suivante -->
+            <?php if ($page < $totalPages): ?>
+                <li>
+                    <a href="?page=<?php echo $page + 1; ?><?php echo $category_id ? '&category_id=' . $category_id : ''; ?>"
+                        class="flex items-center justify-center w-10 h-10 text-gray-600 hover:text-white bg-gray-200 hover:bg-indigo-600 rounded-full transition duration-300">
+                        &gt;
+                    </a>
+                </li>
+            <?php endif; ?>
+        </ul>
+    </nav>
+</div>
+
+
+
+
+
 </div>
 
 <script>

@@ -1,11 +1,7 @@
 </main>
-<footer class="bg-gray-900 text-white py-10 mt-20">
-        <div class="max-w-7xl mx-auto px-6 flex justify-between items-center">
-            <p>&copy; 2025 EventManager. Tous droits réservés.</p>
-            <div class="space-x-6">
-                <a href="/about" class="text-gray-400 hover:text-white transition-all duration-300">À propos</a>
-                <a href="/contact" class="text-gray-400 hover:text-white transition-all duration-300">Contact</a>
-            </div>
+   <footer class="bg-gray-900 text-center text-white py-10 mt-20">
+        <div >
+            &copy; 2025 EventManager. Tous droits réservés.
         </div>
     </footer>
 

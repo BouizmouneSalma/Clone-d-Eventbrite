@@ -11,44 +11,34 @@
 </head>
 <body>
     <header>
-        <nav class="navbar navbar-expand-lg navbar-light bg-light">
-            <div class="container">
-                <a class="navbar-brand" href="/">Gestion d'Événements</a>
-                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="collapse navbar-collapse" id="navbarNav">
-                    <ul class="navbar-nav ml-auto">
-                        <li class="nav-item">
-                            <a class="nav-link" href="/events">Événements</a>
-                        </li>
-                        <?php if (isset($_SESSION['user_id'])): ?>
-                            <?php if ($_SESSION['user_role'] === 'admin'): ?>
-                                <li class="nav-item">
-                                    <a class="nav-link" href="/admin/dashboard">Dashboard Admin</a>
-                                </li>
-                            <?php elseif ($_SESSION['user_role'] === 'organizer'): ?>
-                                <li class="nav-item">
-                                    <a class="nav-link" href="/organizer/dashboard">Dashboard Organisateur</a>
-                                </li>
-                            <?php endif; ?>
-                            <li class="nav-item">
-                                <a class="nav-link" href="/user/profile">Mon Profil</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="/logout">Déconnexion</a>
-                            </li>
-                        <?php else: ?>
-                            <li class="nav-item">
-                                <a class="nav-link" href="/login">Connexion</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="/register">Inscription</a>
-                            </li>
-                        <?php endif; ?>
-                    </ul>
-                </div>
+    <nav class="bg-white shadow-lg py-4">
+        <div class="max-w-7xl mx-auto px-6 flex justify-between items-center">
+            <a href="/" class="text-4xl flex font-semibold text-gray-800 hover:text-indigo-600 transition-all duration-300"><p class="text-blue-400 font-bold text-4xl">You</p>Event</a>
+           
+
+            <!-- User menu -->
+            <div class="hidden md:flex items-center space-x-6">
+                <?php if (isset($_SESSION['user_id'])): ?>
+                    <?php if ($_SESSION['user_role'] === 'admin'): ?>
+                        <a href="/admin/dashboard" class="text-lg text-gray-700 hover:text-indigo-600 transition-all duration-300">Dashboard</a>
+                        <a href="/logout" class="py-2 px-4 bg-red-500 text-white font-semibold rounded-md hover:bg-red-400 transition-all duration-300">Déconnexion</a>
+                    <?php elseif ($_SESSION['user_role'] === 'participant'): ?>
+                    <a href="/" class="text-lg text-gray-700 hover:text-indigo-600 transition-all duration-300">Evenement</a>
+                        <a href="/dashboard" class="text-lg text-gray-700 hover:text-indigo-600 transition-all duration-300">Dashboard</a>
+                        <a href="/logout" class="py-2 px-4 bg-red-500 text-white font-semibold rounded-md hover:bg-red-400 transition-all duration-300">Déconnexion</a>
+                    <?php elseif ($_SESSION['user_role'] === 'organizer'): ?>
+                        <a href="/organizer/dashboard" class="text-lg text-gray-700 hover:text-indigo-600 transition-all duration-300">Dashboard</a>
+                        <a href="/organizer/promo-codes" class="text-lg text-gray-700 hover:text-indigo-600 transition-all duration-300">Code prome</a>
+                        <a href="/organizer/manage-sales" class="text-lg text-gray-700 hover:text-indigo-600 transition-all duration-300">Vente</a>
+                        <a href="/logout" class="py-2 px-4 bg-red-500 text-white font-semibold rounded-md hover:bg-red-400 transition-all duration-300">Déconnexion</a>
+                    <?php endif; ?>
+                   
+                <?php else: ?>
+                    <a href="/register" class="py-2 px-4 bg-green-500 text-white font-semibold rounded-md hover:bg-green-400 transition-all duration-300">Inscription</a>
+                    <a href="/login" class="py-2 px-4 bg-transparent border-2 border-gray-500 text-gray-700 font-semibold rounded-md hover:bg-gray-100 transition-all duration-300">Connexion</a>
+                <?php endif; ?>
             </div>
-        </nav>
+        </div>
+    </nav>
     </header>
     <main class="container mt-4"></main>
