@@ -1,14 +1,17 @@
 <?php
 require_once '../models/Ticket.php';
 require_once '../models/Reservation.php';
+require_once '../models/Event.php';
 
 class TicketController {
     private $ticketModel;
     private $reservationModel;
+    private $eventModel;
 
     public function __construct() {
         $this->ticketModel = new Ticket();
         $this->reservationModel = new Reservation();
+        $this->eventModel = new Event();
     }
 
 
