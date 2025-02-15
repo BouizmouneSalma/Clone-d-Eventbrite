@@ -12,7 +12,7 @@ class EventController {
 
     public function index() {
         $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
-        $perPage = 10;
+        $perPage = 6;
         $category_id = $_GET['category_id'] ?? null;
 
         $totalEvents = $category_id ? $this->eventModel->countByCategory($category_id) : $this->eventModel->countAll();
@@ -34,7 +34,12 @@ class EventController {
 
     }
     public function detail($id) {
+        $userId = isset($_SESSION['user_id']) ? $_SESSION['user_id'] : 0;
         $event = $this->eventModel->getById($id);
+
+       
+        $remainingTickets =$this->eventModel->getRemainingTickets($id);
+
         if (!$event) {
             header('Location: /events');
             exit;
@@ -42,41 +47,64 @@ class EventController {
         require '../views/events/detail.php';
     }
 
-public function create() {
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            if (!isset($_SESSION['user_role']) || $_SESSION['user_role'] !== 'organizer') {
-                header('Location: /login');
-                exit;
-            }
+    public function create() {
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        if (!isset($_SESSION['user_role']) || $_SESSION['user_role'] !== 'organizer') {
+            header('Location: /login');
+            exit;
+        }
 
-            $errors = $this->validateEventData($_POST);
+        $errors = $this->validateEventData($_POST);
 
-            if (empty($errors)) {
-                $data = [
-                    'organizer_id' => $_SESSION['user_id'],
-                    'category_id' => $_POST['category_id'],
-                    'title' => $_POST['title'],
-                    'description' => $_POST['description'],
-                    'event_date' => $_POST['event_date'],
-                    'location' => $_POST['location'],
-                    'total_tickets' => $_POST['total_tickets'],
-                    'price' => $_POST['price']
-                ];
+        
+        $imagePath = null;
+        if (!empty($_FILES['image']['name'])) {
+            $targetDir = "../public/uploads/";
+            $imageName = time() . '_' . basename($_FILES['image']['name']);
+            $targetFilePath = $targetDir . $imageName;
+            $imageFileType = strtolower(pathinfo($targetFilePath, PATHINFO_EXTENSION));
 
-                $eventId = $this->eventModel->create($data);
-
-                if ($eventId) {
-                    header('Location: /events/' . $eventId);
-                    exit;
-                } else {
-                    $error = "La création de l'événement a échoué. Veuillez réessayer.";
-                }
+            
+            $allowedTypes = ['jpg', 'jpeg', 'png', 'gif'];
+            if (!in_array($imageFileType, $allowedTypes)) {
+                $errors[] = "Seuls les fichiers JPG, JPEG, PNG et GIF sont autorisés.";
+            } elseif ($_FILES['image']['size'] > 5000000) { 
+                $errors[] = "L'image est trop lourde (max 5 Mo).";
+            } elseif (!move_uploaded_file($_FILES['image']['tmp_name'], $targetFilePath)) {
+                $errors[] = "Échec du téléchargement de l'image.";
+            } else {
+                $imagePath = "/uploads/" . $imageName;
             }
         }
 
-        $categories = $this->categoryModel->getAll();
-        require '../views/events/create.php';
+        if (empty($errors)) {
+            $data = [
+                'organizer_id' => $_SESSION['user_id'],
+                'category_id' => $_POST['category_id'],
+                'title' => $_POST['title'],
+                'description' => $_POST['description'],
+                'event_date' => $_POST['event_date'],
+                'location' => $_POST['location'],
+                'total_tickets' => $_POST['total_tickets'],
+                'price' => $_POST['price'],
+                'image' => $imagePath
+            ];
+
+            $eventId = $this->eventModel->create($data);
+
+            if ($eventId) {
+                header('Location: /events/' . $eventId);
+                exit;
+            } else {
+                $error = "La création de l'événement a échoué. Veuillez réessayer.";
+            }
+        }
     }
+
+    $categories = $this->categoryModel->getAll();
+    require '../views/events/create.php';
+}
+
      private function validateEventData($data) {
         $errors = [];
 
