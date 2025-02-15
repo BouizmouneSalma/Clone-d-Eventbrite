@@ -3,16 +3,23 @@
 require_once '../models/User.php';
 require_once '../models/Organizer.php';
 require_once '../models/Admin.php';
-
+require_once '../models/Reservation.php';
+require_once '../models/Ticket.php';
+require_once '../models/Event.php';
 class UserController {
     private $userModel;
     private $organizerModel;
+    private $eventModel;
     private $adminModel;
-
+    private $reservationModel;
+    private $ticketModel;
     public function __construct() {
+        $this->eventModel = new Event();
         $this->userModel = new User();
         $this->organizerModel = new Organizer();
         $this->adminModel = new Admin();
+        $this->reservationModel = new Reservation();
+        $this->ticketModel = new Ticket();
     }
 
     public function register() {
@@ -90,7 +97,8 @@ require '../views/user/login.php';
             header('Location: /login');
             exit;
         }
-
+        $pastEvents = $this->reservationModel->getPastEventsByUser($_SESSION['user_id']);
+        $lastReservedEvent = $this->reservationModel->getLastReservedEventByUser($_SESSION['user_id']);
         switch ($_SESSION['user_role']) {
             case 'admin':
                 $controller = new AdminController();
@@ -101,7 +109,26 @@ require '../views/user/login.php';
                 $controller->dashboard();
                 break;
             default:
-                require 'views/user/dashboard.php';
+                require '../views/user/dashboard.php';
+        }
+    }
+    public function cancelReservation($reservationId){
+        echo('res');
+        if (!isset($_SESSION['user_role'])) {
+            header('Location: /login');
+            exit;
+        }
+        $user_id = $_SESSION['user_id'];
+        $reservation = $this->reservationModel->getById($reservationId);
+        if ($reservation && $reservation['user_id'] == $user_id) {
+            if ($this->reservationModel->cancel($reservationId)) {
+                $this->ticketModel->updateStatus($reservation['ticket_id'], 'available');
+                header('Location: /dashboard');
+            } else {
+                echo "Erreur lors de l'annulation de la réservation.";
+            }
+        } else {
+            echo "Réservation non trouvée ou non autorisée.";
         }
     }
 }
